@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 """
-干瞪眼游戏 - 主入口文件
+新玩法游戏 - 主入口文件
 """
 
-from src.game import DengYanGame
+from src.game import NewGame
 from src.player import HumanPlayer, AIPlayer
 
 
 def main():
     """主函数"""
-    print("欢迎来到干瞪眼游戏！")
+    print("欢迎来到新玩法游戏！")
     
     # 游戏设置
     while True:
         try:
-            player_count = int(input("请输入玩家数量 (2-4): ").strip())
-            if 2 <= player_count <= 4:
+            player_count = int(input("请输入玩家数量 (2-6): ").strip())
+            if 2 <= player_count <= 6:
                 break
             else:
-                print("玩家数量必须在2-4之间")
+                print("玩家数量必须在2-6之间")
         except ValueError:
             print("请输入有效数字")
     
@@ -33,7 +33,7 @@ def main():
             print("请输入有效数字")
     
     # 创建并开始游戏
-    game = DengYanGame(player_count)
+    game = NewGame(player_count)
     game.setup_game(human_players)
     game.play_game()
     

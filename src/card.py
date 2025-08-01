@@ -1,22 +1,22 @@
-"""
-干瞪眼游戏 - 牌类定义
+"""新玩法游戏 - 牌类定义
+根据玩法.md重新实现
 """
 
 from enum import Enum
+import random
 from typing import List, Optional
 
 
 class Suit(Enum):
     """花色枚举"""
-    SPADES = "♠"    # 黑桃
-    HEARTS = "♥"    # 红桃
-    DIAMONDS = "♦"  # 方块
-    CLUBS = "♣"     # 梅花
-    JOKER = "🃏"    # 王
+    SPADES = "♠"      # 黑桃
+    HEARTS = "♥"      # 红心
+    CLUBS = "♣"       # 梅花
+    DIAMONDS = "♦"    # 方块
 
 
 class Rank(Enum):
-    """牌点枚举 - 按照干瞪眼规则排序"""
+    """牌面大小枚举 - 按照新玩法规则"""
     THREE = (3, "3")
     FOUR = (4, "4")
     FIVE = (5, "5")
@@ -29,25 +29,41 @@ class Rank(Enum):
     QUEEN = (12, "Q")
     KING = (13, "K")
     ACE = (14, "A")
-    TWO = (15, "2")      # 2比A大
-    SMALL_JOKER = (16, "小王")
-    BIG_JOKER = (17, "大王")
+    TWO = (15, "2")        # 2是最大的单牌，但不能参与顺子
+    SMALL_JOKER = (16, "小王")  # 王不能单出
+    BIG_JOKER = (17, "大王")    # 王不能单出
     
-    def __init__(self, rank_value, display):
+    def __init__(self, rank_value, display_name):
         self.rank_value = rank_value
-        self.display = display
+        self.display_name = display_name
     
     def __lt__(self, other):
-        return self.rank_value < other.rank_value
+        if isinstance(other, Rank):
+            return self.rank_value < other.rank_value
+        return NotImplemented
     
     def __le__(self, other):
-        return self.rank_value <= other.rank_value
+        if isinstance(other, Rank):
+            return self.rank_value <= other.rank_value
+        return NotImplemented
     
     def __gt__(self, other):
-        return self.rank_value > other.rank_value
+        if isinstance(other, Rank):
+            return self.rank_value > other.rank_value
+        return NotImplemented
     
     def __ge__(self, other):
-        return self.rank_value >= other.rank_value
+        if isinstance(other, Rank):
+            return self.rank_value >= other.rank_value
+        return NotImplemented
+    
+    def can_be_single(self):
+        """判断是否可以单出"""
+        return self not in [Rank.SMALL_JOKER, Rank.BIG_JOKER]
+    
+    def can_be_in_straight(self):
+        """判断是否可以参与顺子"""
+        return self not in [Rank.TWO, Rank.SMALL_JOKER, Rank.BIG_JOKER]
 
 
 class Card:
@@ -59,20 +75,47 @@ class Card:
     
     def __str__(self):
         if self.rank in [Rank.SMALL_JOKER, Rank.BIG_JOKER]:
-            return self.rank.display
-        return f"{self.suit.value}{self.rank.display}"
+            return self.rank.display_name
+        return f"{self.suit.value}{self.rank.display_name}"
     
     def __repr__(self):
-        return str(self)
-    
-    def __eq__(self, other):
-        return isinstance(other, Card) and self.rank == other.rank and self.suit == other.suit
+        return self.__str__()
     
     def __lt__(self, other):
+        if not isinstance(other, Card):
+            return NotImplemented
         return self.rank < other.rank
+    
+    def __le__(self, other):
+        if not isinstance(other, Card):
+            return NotImplemented
+        return self.rank <= other.rank
+    
+    def __gt__(self, other):
+        if not isinstance(other, Card):
+            return NotImplemented
+        return self.rank > other.rank
+    
+    def __ge__(self, other):
+        if not isinstance(other, Card):
+            return NotImplemented
+        return self.rank >= other.rank
+    
+    def __eq__(self, other):
+        if not isinstance(other, Card):
+            return NotImplemented
+        return self.rank == other.rank and self.suit == other.suit
     
     def __hash__(self):
         return hash((self.suit, self.rank))
+    
+    def can_be_single(self):
+        """判断是否可以单出"""
+        return self.rank.can_be_single()
+    
+    def can_be_in_straight(self):
+        """判断是否可以参与顺子"""
+        return self.rank.can_be_in_straight()
     
     @property
     def is_joker(self):
@@ -167,14 +210,14 @@ def create_deck() -> List[Card]:
     
     # 添加普通牌（52张）
     normal_ranks = [r for r in Rank if r not in [Rank.SMALL_JOKER, Rank.BIG_JOKER]]
-    normal_suits = [s for s in Suit if s != Suit.JOKER]
+    normal_suits = list(Suit)
     
     for suit in normal_suits:
         for rank in normal_ranks:
             deck.append(Card(suit, rank))
     
-    # 添加大小王
-    deck.append(Card(Suit.JOKER, Rank.SMALL_JOKER))
-    deck.append(Card(Suit.JOKER, Rank.BIG_JOKER))
+    # 添加大小王（使用红桃和黑桃作为花色）
+    deck.append(Card(Suit.HEARTS, Rank.SMALL_JOKER))
+    deck.append(Card(Suit.SPADES, Rank.BIG_JOKER))
     
     return deck

@@ -1,19 +1,19 @@
 """
-干瞪眼游戏 - 核心模块
+新玩法游戏 - 核心模块
 """
 
-from .card import Card, Suit, Rank, CardPattern, CardType, create_deck
-from .pattern_analyzer import PatternAnalyzer
+from .card import Card, Suit, Rank, create_deck
+from .pattern_analyzer import PatternAnalyzer, Pattern, PatternType
 from .player import Player, HumanPlayer, AIPlayer
-from .game import DengYanGame
+from .game import NewGame
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "liyk1997"
-__description__ = "干瞪眼扑克游戏Python实现"
+__description__ = "新玩法扑克游戏Python实现"
 
 __all__ = [
-    "Card", "Suit", "Rank", "CardPattern", "CardType", "create_deck",
-    "PatternAnalyzer",
+    "Card", "Suit", "Rank", "create_deck",
+    "PatternAnalyzer", "Pattern", "PatternType",
     "Player", "HumanPlayer", "AIPlayer", 
-    "DengYanGame"
+    "NewGame"
 ]
