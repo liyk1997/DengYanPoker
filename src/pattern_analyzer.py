@@ -62,10 +62,15 @@ class Pattern:
         if other.pattern_type == PatternType.BOMB:
             return False
         
-        # 相同牌型比较大小（只能"顺大"压制，必须连续）
+        # 相同牌型比较大小
         if self.pattern_type == other.pattern_type and self.size == other.size:
             if self.main_rank and other.main_rank:
-                # 必须是连续的下一个牌面才能压过
+                # 2可以管住其他所有单牌和对子
+                if self.main_rank == Rank.TWO and other.main_rank != Rank.TWO:
+                    if self.pattern_type in [PatternType.SINGLE, PatternType.PAIR]:
+                        return True
+                
+                # 其他牌型必须是连续的下一个牌面才能压过
                 return self.main_rank.rank_value == other.main_rank.rank_value + 1
         
         return False
