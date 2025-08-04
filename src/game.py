@@ -155,25 +155,26 @@ class NewGame:
         print(f"  牌堆剩余: {len(self.deck)}张")
     
     def _calculate_score(self, player: Player, winner_pattern: Optional[Pattern] = None) -> int:
-        """计算积分"""
+        """计算积分（负分系统，积分代表扣的分数）"""
         remaining_cards = len(player.hand)
         
-        # 基础积分
+        # 基础扣分
         score = self.base_score * remaining_cards
         
         # 春天倍率（剩余5张）
         if remaining_cards == 5:
             score *= 2
-            print(f"  {player.name} 春天！积分翻倍")
+            print(f"  {player.name} 春天！扣分翻倍")
         
         # 胜利者牌型倍率
         if winner_pattern:
             multiplier = winner_pattern.get_multiplier()
             if multiplier > 1:
                 score *= multiplier
-                print(f"  胜利者使用{winner_pattern.pattern_type}，积分 x{multiplier}")
+                print(f"  胜利者使用{winner_pattern.pattern_type}，扣分 x{multiplier}")
         
-        return score
+        # 返回负分（扣分）
+        return -score
     
     def _show_results(self):
         """显示游戏结果"""
@@ -191,10 +192,10 @@ class NewGame:
             rank = i + 1
             remaining = len(player.hand)
             if remaining == 0:
-                print(f"  {rank}. {player.name}: 胜利! 🏆")
+                print(f"  {rank}. {player.name}: 胜利! 🏆 (扣分: 0)")
             else:
                 score = self._calculate_score(player, winner_pattern)
-                print(f"  {rank}. {player.name}: 剩余{remaining}张牌，积分{score}")
+                print(f"  {rank}. {player.name}: 剩余{remaining}张牌，扣分{abs(score)}")
     
 
 
