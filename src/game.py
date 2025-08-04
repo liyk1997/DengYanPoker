@@ -125,12 +125,16 @@ class NewGame:
             # 下一个玩家（逆时针）
             self.current_player_index = (self.current_player_index - 1) % self.player_count
         
-        # 轮次结束，最后出牌者补牌
+        # 轮次结束，最后出牌者补牌（如果还有手牌）
         if round_winner_index != -1 and self.deck:
             winner = self.players[round_winner_index]
-            new_card = self.deck.pop()
-            winner.add_card(new_card)
-            print(f"{winner.name} 补牌: {new_card}")
+            # 只有还有手牌的玩家才补牌
+            if len(winner.hand) > 0:
+                new_card = self.deck.pop()
+                winner.add_card(new_card)
+                print(f"{winner.name} 补牌: {new_card}")
+            else:
+                print(f"{winner.name} 已出完牌，无需补牌")
         
         # 重新开始，最后出牌者先出
         self.last_pattern = None
