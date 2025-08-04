@@ -92,7 +92,7 @@ class NewGame:
         while consecutive_passes < self.player_count - 1:
             current_player = self.players[self.current_player_index]
             
-            # 检查是否胜利
+            # 检查是否胜利（在回合开始时）
             if len(current_player.hand) == 0:
                 self.game_over = True
                 self.winner = current_player
@@ -116,6 +116,12 @@ class NewGame:
                 # 移除出的牌
                 for card in played_cards:
                     current_player.remove_card(card)
+                
+                # 检查出牌后是否胜利
+                if len(current_player.hand) == 0:
+                    self.game_over = True
+                    self.winner = current_player
+                    return
                 
             else:
                 # 跳过
